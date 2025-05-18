@@ -25,15 +25,25 @@
         </div>
         <div id="credit-column">
           <p>Credits</p>
-          <input type="number" id="credit" placeholder="Enter credits">
+          <select id="credit">
+            <option value=0>Select Credit</option>
+            <option value=12>12</option>
+            <option value=24>24</option>
+          </select>
         </div>
         <div id="grade-column">
           <p>Grade</p>
           <input type="number" id="grade" placeholder="Enter grade">
         </div>
       </div>
+        <div id="extra-rows-container">
+          <!-- Extra rows will be added here -->
+        </div>
+      
+
       <div id="add-button-container">
-        <button id="add-button">Add Course</button>
+        <button id="add-button" onclick="addRow()">Add Course</button>
+        <button id="remove-button" onclick="removeRow()">Remove Course</button>
       </div>
       <div id="target-GPA-container">
         <p>Target GPA:</p>
@@ -41,12 +51,10 @@
       </div>
 
       <div id="suggest-button-container">
-        <button id="suggest-button">Suggest minimum scores for remaining courses</button>
-      </div>
-
-      <div id="calculate-button-container">
-        <button id="calculate-button">Calculate GPA</button>
-        <button id="reset-button">Reset All</button>
+        <button id="suggest-button" onclick="suggest()">Suggest minimum scores for remaining courses</button>
+      </div>      <div id="calculate-button-container">
+        <button id="calculate-button" onclick="calculateTotalGPA()">Calculate GPA</button>
+        <button id="reset-button" onclick="resetAll()">Reset All</button>
       </div>
     </div>
 
@@ -93,6 +101,6 @@
         </footer>         
 </div>
 <body>
-
+<script src="script_new.js"></script>
 </body>
 </html>

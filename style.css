@@ -3,6 +3,7 @@
   padding: 0;
   box-sizing: border-box;
 }
+
 #wrapper{
   display: flex;
   flex-direction: column;
@@ -61,7 +62,7 @@ hr {
 .main-content {
   display: flex;
   width: 100%;
-  min-height: 75vh;
+  min-height: auto;
   padding: 20px;
   
 }
@@ -85,6 +86,8 @@ hr {
   align-items: center;
   justify-content: center;
   margin-right: 5vw;
+  height:65vh
+  
 }
 
 #input-container {
@@ -94,7 +97,7 @@ hr {
   justify-content: flex-start;
   align-items: flex-start;
   gap: 20px;
-  margin-bottom: 2vh;
+  
 }
 
 #input-container div {
@@ -119,11 +122,68 @@ hr {
 
 #input-container input {
   width: 100%;
-  height: 40px;
+  height: 40px; 
   border-radius: 8px;
   border: 2px solid #000;
   padding: 8px;
   min-width: 60px; /* Đảm bảo input không bị quá nhỏ */
+}
+#input-container select {
+  width: 100%;
+  height: 40px; 
+  border-radius: 8px;
+  border: 2px solid #000;
+  padding: 8px;
+}
+#extra-rows-container{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 20px;
+  
+}
+
+#extra-rows-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.input-row {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.input-row div {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.input-row #course-name-column {
+  width: 40%;
+}
+
+.input-row #credit-column,
+.input-row #grade-column {
+  width: 20%;
+}
+
+.input-row input,
+.input-row select {
+  width: 100%;
+  height: 40px;
+  border-radius: 8px;
+  border: 2px solid #000;
+  padding: 8px;
+  min-width: 60px;
 }
 
 #target-GPA-container {
@@ -192,8 +252,10 @@ hr {
   margin-right: 3vw;
 }
 #add-button-container{
-  
+  display: flex;
+  flex-direction: row;
 }
+
 /*Footer*/
 #footer {
   bottom: 0;
@@ -253,7 +315,7 @@ hr {
   transition: color 0.3s ease;
 }
 
-.social-links {
+social-links {
   display: flex;
   gap: 1rem;
   align-items: center;
@@ -283,4 +345,22 @@ hr {
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   color: #949393;
   font-size: 0.8rem;
+}
+
+.suggested-grade {
+  color: #2d8cff;
+  font-weight: bold;
+  font-style: italic;
+}
+
+.grade-placeholder::placeholder {
+  color: #2d8cff;
+  opacity: 0.7;
+}
+
+.grade-placeholder::placeholder {
+  color: #2d8cff;
+  opacity: 0.8;
+  font-weight: bold;
+  font-style: italic;
 }
