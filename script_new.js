@@ -46,7 +46,7 @@ function addRow() {
 
 function removeRow() {
   const container = document.getElementById("extra-rows-container");
-  const rows = container.querySelectorAll(".input-container");
+  const rows = container.getElementsByClassName("input-container");
   
   if (rows && rows.length > 0) {
     const lastRow = rows[rows.length - 1];
@@ -228,7 +228,7 @@ function suggest() {
   coursesToSuggest.forEach((course, i) => {
     const gradeInput = course.row.querySelector(".grade");
     const suggestedPercent = Math.ceil(50 + (bestCombination[i] - 1.0) * 10);
-    gradeInput.placeholder = `Need at least ${suggestedPercent}%`;
+    gradeInput.placeholder = `Need ${suggestedPercent}%`;
     gradeInput.classList.add("grade-placeholder");
   });
 }
@@ -245,11 +245,16 @@ function saveState() {
     ];
 
     const currentState = {
-        courses: rows.map(row => ({
-            courseName: row.querySelector(".course-name").value,
-            credit: row.querySelector(".credit").value,
-            grade: row.querySelector(".grade").value
-        })),
+        courses: rows.map(row => {
+            const gradeInput = row.querySelector(".grade");
+            return {
+                courseName: row.querySelector(".course-name").value,
+                credit: row.querySelector(".credit").value,
+                grade: gradeInput.value,
+                placeholder: gradeInput.placeholder,
+                hasPlaceholderClass: gradeInput.classList.contains("grade-placeholder")
+            };
+        }),
         targetGPA: document.getElementById("target-GPA").value,
         currentGPA: document.getElementById("current-GPA").innerHTML
     };
@@ -273,33 +278,42 @@ function undo() {
     currentStateIndex--;
     const previousState = stateHistory[currentStateIndex];
 
-    // Khôi phục trạng thái trước đó
+    // Restore previous state
     const firstRow = document.querySelector(".input-container");
     if (previousState.courses.length > 0) {
-        firstRow.querySelector(".course-name").value = previousState.courses[0].courseName || "";
-        firstRow.querySelector(".credit").value = previousState.courses[0].credit || "";
-        firstRow.querySelector(".grade").value = previousState.courses[0].grade || "";
-    }
-
-    // Khôi phục các dòng phụ
+        const firstCourse = previousState.courses[0];
+        firstRow.querySelector(".course-name").value = firstCourse.courseName || "";
+        firstRow.querySelector(".credit").value = firstCourse.credit || "";
+        const firstGradeInput = firstRow.querySelector(".grade");
+        firstGradeInput.value = firstCourse.grade || "";
+        firstGradeInput.placeholder = firstCourse.placeholder || "Enter grade";
+        firstGradeInput.classList.remove("grade-placeholder");
+    }    // Restore extra rows
     const container = document.getElementById("extra-rows-container");
     container.innerHTML = "";
     for (let i = 1; i < previousState.courses.length; i++) {
+        const course = previousState.courses[i];
         const row = document.createElement("div");
         row.className = "input-container";
         row.innerHTML = `<div class="course-name-column">
-            <input type="text" class="course-name" value="${previousState.courses[i].courseName || ''}" placeholder="Enter course name">
+            <input type="text" class="course-name" value="${course.courseName || ''}" placeholder="Enter course name">
             </div>
             <div class="credit-column">
                 <select class="credit">
-                    <option value="" ${!previousState.courses[i].credit ? "selected" : ""}>Select Credit</option>
-                    <option value=12 ${previousState.courses[i].credit === "12" ? "selected" : ""}>12</option>
-                    <option value=24 ${previousState.courses[i].credit === "24" ? "selected" : ""}>24</option>
+                    <option value="" ${!course.credit ? "selected" : ""}>Select Credit</option>
+                    <option value=12 ${course.credit === "12" ? "selected" : ""}>12</option>
+                    <option value=24 ${course.credit === "24" ? "selected" : ""}>24</option>
                 </select>
             </div>
             <div class="grade-column">
-                <input type="number" class="grade" value="${previousState.courses[i].grade || ''}" placeholder="Enter grade">
+                <input type="number" class="grade" value="${course.grade || ''}" placeholder="${course.placeholder || 'Enter grade'}">
             </div>`;
+        
+        // Set grade placeholder class after the row is created
+        const gradeInput = row.querySelector('.grade');
+        if (course.hasPlaceholderClass) {
+            gradeInput.classList.add('grade-placeholder');
+        }
         container.appendChild(row);
     }
 

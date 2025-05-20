@@ -6,10 +6,11 @@
   <link rel="stylesheet" href="style.css">
   <title>GPA Managemnet</title>
 </head>
+<body>
 <div id="wrapper">
   <div id="header">
     <div id="image-container">
-      <img src="image/rmit-logo.png" alt="rmit-Logo">
+      <img src="image/logo-rmit-for-gpa.png" alt="rmit-Logo">
       </div>
         <div id="title-container">
           <p>GPA Management for Students</p> 
@@ -17,50 +18,58 @@
               </div>
                 <hr>
   <!-- INPUT -->  <div class="main-content">
-    <div class="left-section">      <div class="input-container">
-        <div class="course-name-column">
-          <p>Course Name</p>
-          <input type="text" class="course-name" placeholder="Enter course name">
+    <div class="left-section">      
+      <div id="large-input-container">
+        <div class="input-container first-row">
+          <div class="course-name-column">
+            <p>Course Name</p>
+            <input type="text" class="course-name" placeholder="Enter course name">
+          </div>
+          <div class="credit-column">
+            <p>Credits</p>
+            <select class="credit">
+              <option value="">Select Credit</option>
+              <option value=12>12</option>
+              <option value=24>24</option>
+            </select>
+          </div>
+          <div class="grade-column">
+            <p>Grade</p>
+            <input type="number" class="grade" placeholder="Enter grade">
+          </div>
         </div>
-        <div class="credit-column">
-          <p>Credits</p>
-          <select class="credit">
-            <option value="">Select Credit</option>
-            <option value=12>12</option>
-            <option value=24>24</option>
-          </select>
-        </div>
-        <div class="grade-column">
-          <p>Grade</p>
-          <input type="number" class="grade" placeholder="Enter grade">
-        </div>
-      </div>
         <div id="extra-rows-container">
           <!-- Extra rows will be added here -->
         </div>
+      </div>
+        <div id="add-button-container">
+        <button id="add-button" onclick="addRow()">+ Add Course</button>
+        <button id="remove-button" onclick="removeRow()">- Remove Course</button>
+        <button id="undo-button" onclick="undo()">↩ Undo</button>
+      </div>
       
+     <!--delete here-->
 
-      <div id="add-button-container">
-        <button id="add-button" onclick="addRow()">Add Course</button>
-        <button id="remove-button" onclick="removeRow()">Remove Course</button>
-      </div>
-      <div id="target-GPA-container">
-        <p>Target GPA:</p>
-        <input type="number" id="target-GPA" placeholder="Enter target GPA">
-      </div>
-
-      <div id="suggest-button-container">
-        <button id="suggest-button" onclick="suggest()">Suggest minimum scores for remaining courses</button>
-      </div>      
-      <div id="calculate-button-container">        <button id="calculate-button" onclick="calculateTotalGPA()">Calculate GPA</button>
-        <button id="undo-button" onclick="undo()">Undo</button>
-      </div>
+  
     </div>
 
     <div class="right-section">
       <div id="result-container">
         <p>Your Current GPA</p>
         <p id="current-GPA"><!--js--></p>
+      </div>
+      <!--Change here-->
+       <div class="control-panel">
+        <div id="target-GPA-container">
+          <p>Target GPA:</p>
+          <input type="number" id="target-GPA" placeholder="0.0 - 4.0" min="0" max="4" step="0.1">
+        </div>
+        <div id="calculate-button-container">
+          <button id="calculate-button" onclick="calculateTotalGPA()">Calculate GPA</button>
+        </div>
+      </div>
+      <div id="suggest-button-container">
+        <button id="suggest-button" onclick="suggest()">✨ Suggest minimum scores for remaining courses</button>
       </div>
     </div>
   </div>
@@ -99,7 +108,7 @@
           </div>
         </footer>         
 </div>
-<body>
+
 <script src="script_new.js"></script>
 </body>
 </html>
