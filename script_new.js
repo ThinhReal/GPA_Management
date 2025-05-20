@@ -70,31 +70,31 @@ function calculateTotalGPA() {
   rows.forEach((row) => {
     const creditSelect = row.querySelector(".credit");
     const gradeInput = row.querySelector(".grade");
+    // Stop when Grade is entered but Credit is not
+    if(!creditSelect.value && gradeInput.value) {
+      alert("Please select credit for the course with grade");
+      return;
+    }
 
     if (!creditSelect.value || !gradeInput.value) {   // Only calculate if both credit and grade are entered
       
       return;
     }
-    if(!creditSelect.value && gradeInput.value) {
-      alert("Please select credit for the course with grade");
-      return;
-    }
     
-
     const creditNumber = parseFloat(creditSelect.value);
     const grade = parseFloat(gradeInput.value);
 
-    if (grade <= 0 || grade > 100) {
-      alert("Please enter valid grades between 0 and 100");
+    if (grade < 50 || grade > 100) {
+      alert("Please enter valid grades between 50 and 100 because you have to pass the course (grade >= 50) to get GPA");
       return;
     }
 
     let gradePointValue;
     if (grade >= 80) gradePointValue = 4;
-    else if (grade >= 70) gradePointValue = 3;
-    else if (grade >= 60) gradePointValue = 2; 
-    else if (grade >= 50) gradePointValue = 1;
-    else gradePointValue = 0;
+      else if (grade >= 70) gradePointValue = 3;
+      else if (grade >= 60) gradePointValue = 2;
+      else if (grade >= 50) gradePointValue = 1;
+      else alert("You have to pass the course (grade >= 50) to get GPA");
 
     totalCredits += creditNumber;
     totalGradePoints += creditNumber * gradePointValue;
@@ -103,130 +103,212 @@ function calculateTotalGPA() {
 
   const GPA = totalGradePoints / totalCredits;
   document.getElementById("current-GPA").innerHTML = GPA.toFixed(2);
-
   
   // Save after calculating GPA
   saveToLocalStorage();
 }
-
-function suggest() {
-  calculateTotalGPA();
-  const targetGPA = parseFloat(document.getElementById("target-GPA").value);
   
-  if (targetGPA < 0 || targetGPA > 4) {
+function suggest() {
+  calculateTotalGPA(); // cập nhật GPA hiện tại nếu có thay đổi
+
+  const targetGPA = parseFloat(document.getElementById("target-GPA").value);
+
+  // Kiểm tra giá trị nhập vào
+  if(!targetGPA) {
+    alert("Please enter a target GPA to get suggestions!");
+    return;
+  }
+  if (targetGPA < 0 || targetGPA > 4 ) {
     alert("Please enter a valid target GPA between 0 and 4");
     return;
   }
 
+  // Lấy tất cả các dòng (bao gồm dòng đầu + các dòng thêm)
   const rows = [
     document.querySelector(".input-container"),
     ...document.querySelectorAll("#extra-rows-container .input-container")
   ];
 
-  let totalCredits = 0;
-  let totalGradePoints = 0;
+  let totalCredits = 0;           // Tổng số tín chỉ của tất cả môn
+  let totalGradePoints = 0;       // Tổng điểm đã có (grade × credit)
+  let coursesToSuggest = [];      // Danh sách các môn chưa nhập grade
 
+  // Duyệt qua từng dòng
   rows.forEach((row) => {
     const creditSelect = row.querySelector(".credit");
     const gradeInput = row.querySelector(".grade");
-    
-    if (!creditSelect.value) return;
+
+    if (!creditSelect.value) return; // nếu chưa chọn tín chỉ → bỏ qua
 
     const creditNumber = parseFloat(creditSelect.value);
-    
+
     if (gradeInput.value) {
       const grade = parseFloat(gradeInput.value);
       let gradePointValue;
-      
+      // Chuyển điểm phần trăm → thang GPA (4.0)
       if (grade >= 80) gradePointValue = 4;
       else if (grade >= 70) gradePointValue = 3;
       else if (grade >= 60) gradePointValue = 2;
       else if (grade >= 50) gradePointValue = 1;
-      else gradePointValue = 0;
+      else alert("You have to pass the course (grade >= 50) to get GPA");
 
       totalCredits += creditNumber;
       totalGradePoints += creditNumber * gradePointValue;
+    } else {
+      // Nếu chưa có grade but have Credit
+      coursesToSuggest.push({ row, credit: creditNumber });
+      totalCredits += creditNumber;
     }
   });
 
-  let totalCreditWithoutGrade = 0;
-  rows.forEach((row) => {
-    const creditSelect = row.querySelector(".credit");
-    const gradeInput = row.querySelector(".grade");
-    
-    if (creditSelect.value && !gradeInput.value) {
-      totalCreditWithoutGrade += parseFloat(creditSelect.value);
-    }
-  });
-
-  if (totalCreditWithoutGrade === 0) {
+  // Nếu không có môn nào để gợi ý
+  if (coursesToSuggest.length === 0) {
     alert("Please add courses and corresponding credits without grades to get suggestions!");
     return;
   }
 
-  const minimumGrade = (targetGPA * (totalCredits + totalCreditWithoutGrade) - totalGradePoints) / totalCreditWithoutGrade;
+  // Tính tổng số điểm cần đạt để đạt target GPA
+  const totalPointsNeeded = targetGPA * totalCredits;
 
-  alert(`${minimumGrade}`)
+  // Số điểm còn thiếu
+  const remainingPointsNeeded = totalPointsNeeded - totalGradePoints;
 
-/*  let requiredGrade;
-  if (minimumGrade > 4) alert("Target GPA is not achievable with current grades!");
-  else if (minimumGrade > 3.5 && minimumGrade <= 4) requiredGrade = 80;
-  else if (minimumGrade >2 && minimumGrade<=2.5) requiredGrade = 70;
-  else if (minimumGrade >1.5 && minimumGrade<=2) requiredGrade = 60;
-  else if (minimumGrade >= 1 && minimunGrade<=1.5) requiredGrade = 50;
-  else if (minimumGrade < 1) alert("You've already achieved higher than target GPA!");
+  let bestCombination = null;
+  let minDiff = Infinity;
+  let minGPA4Count = Infinity; //thêm biến để theo dõi số lượng GPA 4.0 trong tổ hợp tốt nhất
 
-  rows.forEach((row) => {
-    const gradeInput = row.querySelector(".grade");
-    const creditSelect = row.querySelector(".credit");
-   // Add placeholder and class only if credit is selected and grade is not entered, to show the required grade 
-   if(minimumGrade <= 4 && minimumGrade >= 1) {
-    if (creditSelect.value && !gradeInput.value) {
-      gradeInput.placeholder = `Need at least ${requiredGrade}%`;
-      gradeInput.classList.add('grade-placeholder');
+  // Check nếu điểm suggest max có thể đạt được vẫn thấp hơn target GPA.
+  let maxPossiblePoints = totalGradePoints;
+    coursesToSuggest.forEach((course) => {
+    maxPossiblePoints += 4.0 * course.credit;
+    });
+    const maxPossibleGPA = maxPossiblePoints / totalCredits;
+
+  if (maxPossibleGPA < targetGPA) {
+  alert(`With all remaining courses scoring 80% (GPA 4.0) your GPA is ${maxPossibleGPA}, your target GPA of ${targetGPA} is not achievable. Please lower your target.`);
+  return;
+}
+  // Hàm đệ quy (DFS) để tìm tổ hợp điểm gần nhất với target GPA
+  
+ function dfs(index, currentPoints, currentGrades, gpa4Count = 0) {
+    if (index === coursesToSuggest.length) {
+      const total = totalGradePoints + currentPoints;
+      const actualGPA = total / totalCredits;
+      const diff = actualGPA >= targetGPA ? actualGPA - targetGPA : Infinity;
+
+      if (
+        diff < minDiff ||
+        (diff === minDiff && gpa4Count < minGPA4Count)
+      ) {
+        minDiff = diff;
+        minGPA4Count = gpa4Count;
+        bestCombination = [...currentGrades];
+      }
+      return;
     }
 
-}})
-
-  if(minimumGrade <= 4 && minimumGrade >= 1) {
-    alert(`To achieve a GPA of ${targetGPA}, you need at least ${requiredGrade}% in remaining courses.`);
+    const credit = coursesToSuggest[index].credit;
+    for (let gpa of [1.0, 2.0, 3.0, 4.0]) {
+      const nextGPA4Count = gpa === 4.0 ? gpa4Count + 1 : gpa4Count;
+      dfs(index + 1, currentPoints + gpa * credit, [...currentGrades, gpa], nextGPA4Count);
     }
-    */
+}
+
+  // Bắt đầu tìm kiếm
+  dfs(0, 0, []);
+  console.log("bestCombination:", bestCombination);//xuất ra console để kiểm tra tổ hợp tốt nhất
+
+  if (!bestCombination) {
+    alert("Cannot suggest grades to meet target GPA.");
+    return;
   }
+  
 
-function resetAll() {
+  // Gán kết quả ra placeholder các ô chưa có điểm
+  coursesToSuggest.forEach((course, i) => {
+    const gradeInput = course.row.querySelector(".grade");
+    const suggestedPercent = Math.ceil(50 + (bestCombination[i] - 1.0) * 10);
+    gradeInput.placeholder = `Need at least ${suggestedPercent}%`;
+    gradeInput.classList.add("grade-placeholder");
+  });
+}
+
+// Mảng lưu trữ lịch sử các trạng thái
+let stateHistory = [];
+let currentStateIndex = -1;
+
+// Hàm lưu trạng thái hiện tại vào lịch sử
+function saveState() {
     const rows = [
         document.querySelector(".input-container"),
         ...document.querySelectorAll("#extra-rows-container .input-container")
     ];
-    
-    rows.forEach(row => {
-        const courseNameInput = row.querySelector(".course-name");
-        const creditSelect = row.querySelector(".credit");
-        const gradeInput = row.querySelector(".grade");
-        
-        if (courseNameInput) courseNameInput.value = "";
-        if (creditSelect) creditSelect.value = "";
-        if (gradeInput) {
-            gradeInput.value = "";
-            gradeInput.placeholder = "Enter grade";
-            gradeInput.classList.remove('grade-placeholder');
-        }
-    });
-    
-    const targetGPA = document.getElementById("target-GPA");
-    if (targetGPA) {
-        targetGPA.value = "";
-        targetGPA.placeholder = "Enter target GPA";
+
+    const currentState = {
+        courses: rows.map(row => ({
+            courseName: row.querySelector(".course-name").value,
+            credit: row.querySelector(".credit").value,
+            grade: row.querySelector(".grade").value
+        })),
+        targetGPA: document.getElementById("target-GPA").value,
+        currentGPA: document.getElementById("current-GPA").innerHTML
+    };
+
+    // Xóa các trạng thái phía trước nếu đang ở giữa lịch sử
+    if (currentStateIndex < stateHistory.length - 1) {
+        stateHistory = stateHistory.slice(0, currentStateIndex + 1);
     }
-    
-    const currentGPA = document.getElementById("current-GPA");
-    if (currentGPA) currentGPA.innerHTML = "";
-    
+
+    stateHistory.push(currentState);
+    currentStateIndex = stateHistory.length - 1;
+}
+
+//Undo Button
+function undo() {
+    if (currentStateIndex <= 0) {
+        alert("No more actions to undo!");
+        return;
+    }
+
+    currentStateIndex--;
+    const previousState = stateHistory[currentStateIndex];
+
+    // Khôi phục trạng thái trước đó
+    const firstRow = document.querySelector(".input-container");
+    if (previousState.courses.length > 0) {
+        firstRow.querySelector(".course-name").value = previousState.courses[0].courseName || "";
+        firstRow.querySelector(".credit").value = previousState.courses[0].credit || "";
+        firstRow.querySelector(".grade").value = previousState.courses[0].grade || "";
+    }
+
+    // Khôi phục các dòng phụ
     const container = document.getElementById("extra-rows-container");
     container.innerHTML = "";
+    for (let i = 1; i < previousState.courses.length; i++) {
+        const row = document.createElement("div");
+        row.className = "input-container";
+        row.innerHTML = `<div class="course-name-column">
+            <input type="text" class="course-name" value="${previousState.courses[i].courseName || ''}" placeholder="Enter course name">
+            </div>
+            <div class="credit-column">
+                <select class="credit">
+                    <option value="" ${!previousState.courses[i].credit ? "selected" : ""}>Select Credit</option>
+                    <option value=12 ${previousState.courses[i].credit === "12" ? "selected" : ""}>12</option>
+                    <option value=24 ${previousState.courses[i].credit === "24" ? "selected" : ""}>24</option>
+                </select>
+            </div>
+            <div class="grade-column">
+                <input type="number" class="grade" value="${previousState.courses[i].grade || ''}" placeholder="Enter grade">
+            </div>`;
+        container.appendChild(row);
+    }
 
-    localStorage.removeItem('gpaData');
+    // Khôi phục target GPA và current GPA
+    document.getElementById("target-GPA").value = previousState.targetGPA || "";
+    document.getElementById("current-GPA").innerHTML = previousState.currentGPA || "";
+
+    // Lưu trạng thái mới vào localStorage
+    localStorage.setItem('gpaData', JSON.stringify(previousState));
 }
 
 function saveToLocalStorage() {
@@ -335,6 +417,12 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelector('#wrapper').addEventListener('change', function(e) {
         if (e.target.matches('input') || e.target.matches('select')) {
             saveToLocalStorage();
+            saveState(); // Lưu trạng thái mới vào lịch sử
         }
     });
+
+    // Lưu trạng thái ban đầu sau khi tải dữ liệu
+    setTimeout(() => {
+        saveState();
+    }, 100);
 });
