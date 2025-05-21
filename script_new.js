@@ -58,6 +58,308 @@ function removeRow() {
   }
 }
 
+// Initialize yearCount
+let yearCount = 1;
+
+function addYear() {
+    if (yearCount >= 4) {
+        alert("You can only add up to 4 years!");
+        return;
+    }
+    
+    // Save current year state before adding new year
+    const currentActiveYear = document.querySelector('.extra-year.active-year');
+    if (currentActiveYear) {
+        const currentYearNumber = parseInt(currentActiveYear.innerHTML.split(' ')[1]);
+        saveCurrentYearState(currentYearNumber);
+    }
+    
+    yearCount++;
+    
+    // Create and add the new year button
+    const extraYear = document.querySelector(".extra-year-container");
+    const year = document.createElement("button");
+    year.className = "extra-year";
+    year.innerHTML = `Year ${yearCount}`;
+    year.onclick = function() { moveToYear(yearCount); }; // Use function to ensure proper binding
+    extraYear.appendChild(year);
+    
+    // Initialize storage for the new year if it doesn't exist
+    if (!localStorage.getItem(`year${yearCount}Data`)) {
+        // Initialize empty state for the new year
+        localStorage.setItem(`year${yearCount}Data`, JSON.stringify({
+            courses: [{
+                courseName: "",
+                credit: "",
+                grade: ""
+            }]
+        }));
+        
+        // Set default HTML structure for the new year
+        const defaultHTML = `
+            <div class="input-container first-row">
+                <div class="course-name-column">
+                    <p>Course Name</p>
+                    <input type="text" class="course-name" placeholder="Enter course name">
+                </div>
+                <div class="credit-column">
+                    <p>Credits</p>
+                    <select class="credit">
+                        <option value="">Select Credit</option>
+                        <option value="12">12</option>
+                        <option value="24">24</option>
+                    </select>
+                </div>
+                <div class="grade-column">
+                    <p>Grade</p>
+                    <input type="number" class="grade" placeholder="Enter grade">
+                </div>
+            </div>
+            <div id="extra-rows-container"></div>
+        `;
+        localStorage.setItem(`year${yearCount}HTML`, defaultHTML);
+        
+        // Initialize GPAs
+        localStorage.setItem(`year${yearCount}TargetGPA`, "");
+        localStorage.setItem(`year${yearCount}CurrentGPA`, "");
+    }
+    
+    // Switch to the new year
+    moveToYear(yearCount);
+}
+
+function removeYear() {
+    if (yearCount <= 1) {
+        alert("Cannot remove Year 1!");
+        return;
+    }
+    
+    const extraYear = document.querySelector(".extra-year-container");
+    const years = extraYear.getElementsByClassName("extra-year");
+    if (years.length > 0) {
+        const yearToRemove = years[years.length - 1];
+        const yearNumber = yearToRemove.innerHTML.split(' ')[1];
+        
+        // If we're removing the active year, switch to the previous year first
+        if (yearToRemove.classList.contains('active-year')) {
+            moveToYear(yearCount - 1);
+        }
+        
+        // Remove the year button
+        extraYear.removeChild(yearToRemove);
+        yearCount--;
+        
+        // Clean up storage for the removed year
+        localStorage.removeItem(`year${yearNumber}Data`);
+        localStorage.removeItem(`year${yearNumber}HTML`);
+        localStorage.removeItem(`year${yearNumber}TargetGPA`);
+        localStorage.removeItem(`year${yearNumber}CurrentGPA`);
+    }
+}
+function moveToYear(year) {
+    if (!year) return;
+    
+    const currentActiveYear = document.querySelector('.extra-year.active-year');
+    if (currentActiveYear) {
+        // Save current year's data and state
+        const currentYearNumber = currentActiveYear.innerHTML.split(' ')[1];
+        saveCurrentYearState(currentYearNumber);
+    }
+
+    // Load the selected year's data and state
+    loadYearState(year);
+
+    // Update active year styling
+    document.querySelectorAll('.extra-year').forEach(btn => {
+        btn.classList.remove('active-year');
+        if (btn.innerHTML === `Year ${year}`) {
+            btn.classList.add('active-year');
+        }
+    });
+
+    // Add event listeners to the loaded inputs
+    addInputEventListeners();
+    
+    // Reset current GPA display
+    document.getElementById("current-GPA").innerHTML = "";
+}
+
+function saveCurrentYearState(yearNumber) {
+    const container = document.getElementById("large-input-container");
+    
+    // Save the HTML structure
+    localStorage.setItem(`year${yearNumber}HTML`, container.innerHTML);
+    
+    // Save the courses data
+    saveCurrentYearData();
+    
+    // Save target GPA
+    const targetGPA = document.getElementById("target-GPA").value;
+    localStorage.setItem(`year${yearNumber}TargetGPA`, targetGPA);
+    
+    // Save current GPA
+    const currentGPA = document.getElementById("current-GPA").innerHTML;
+    localStorage.setItem(`year${yearNumber}CurrentGPA`, currentGPA);
+}
+
+function loadYearState(year) {
+    const targetYear = document.getElementById("large-input-container");
+    
+    // Try to load saved HTML for the selected year
+    const savedHTML = localStorage.getItem(`year${year}HTML`);
+    if (savedHTML) {
+        // If we have saved HTML for this year, use it
+        targetYear.innerHTML = savedHTML;
+    } else {
+        // If no saved HTML exists, create default structure
+        targetYear.innerHTML = `
+            <div class="input-container first-row">
+                <div class="course-name-column">
+                    <p>Course Name</p>
+                    <input type="text" class="course-name" placeholder="Enter course name">
+                </div>
+                <div class="credit-column">
+                    <p>Credits</p>
+                    <select class="credit">
+                        <option value="">Select Credit</option>
+                        <option value="12">12</option>
+                        <option value="24">24</option>
+                    </select>
+                </div>
+                <div class="grade-column">
+                    <p>Grade</p>
+                    <input type="number" class="grade" placeholder="Enter grade">
+                </div>
+            </div>
+            <div id="extra-rows-container"></div>
+        `;
+    }
+
+    // Load the year's data
+    const yearData = localStorage.getItem(`year${year}Data`);
+    if (yearData) {
+        const data = JSON.parse(yearData);
+        
+        // Fill in the first row
+        const firstRow = targetYear.querySelector(".input-container");
+        if (firstRow && data.courses[0]) {
+            firstRow.querySelector(".course-name").value = data.courses[0].courseName || '';
+            firstRow.querySelector(".credit").value = data.courses[0].credit || '';
+            firstRow.querySelector(".grade").value = data.courses[0].grade || '';
+        }
+
+        // Fill in additional rows
+        const container = targetYear.querySelector("#extra-rows-container");
+        for (let i = 1; i < data.courses.length; i++) {
+            if (!container.children[i-1]) {
+                // Create new row if it doesn't exist
+                const row = document.createElement("div");
+                row.className = "input-container";
+                row.innerHTML = `
+                    <div class="course-name-column">
+                        <input type="text" class="course-name" value="${data.courses[i].courseName || ''}" placeholder="Enter course name">
+                    </div>
+                    <div class="credit-column">
+                        <select class="credit">
+                            <option value="" ${!data.courses[i].credit ? 'selected' : ''}>Select Credit</option>
+                            <option value="12" ${data.courses[i].credit === '12' ? 'selected' : ''}>12</option>
+                            <option value="24" ${data.courses[i].credit === '24' ? 'selected' : ''}>24</option>
+                        </select>
+                    </div>
+                    <div class="grade-column">
+                        <input type="number" class="grade" value="${data.courses[i].grade || ''}" placeholder="Enter grade">
+                    </div>
+                `;
+                container.appendChild(row);
+            } else {
+                // Update existing row
+                const row = container.children[i-1];
+                row.querySelector(".course-name").value = data.courses[i].courseName || '';
+                row.querySelector(".credit").value = data.courses[i].credit || '';
+                row.querySelector(".grade").value = data.courses[i].grade || '';
+            }
+        }
+    }
+    
+    // Load target GPA
+    const savedTargetGPA = localStorage.getItem(`year${year}TargetGPA`);
+    if (savedTargetGPA) {
+        document.getElementById("target-GPA").value = savedTargetGPA;
+    } else {
+        document.getElementById("target-GPA").value = "";
+    }
+    
+    // Load current GPA
+    const savedCurrentGPA = localStorage.getItem(`year${year}CurrentGPA`);
+    if (savedCurrentGPA) {
+        document.getElementById("current-GPA").innerHTML = savedCurrentGPA;
+    } else {
+        document.getElementById("current-GPA").innerHTML = "";
+    }
+}
+
+function saveCurrentYearData() {
+    // Get current active year
+    const activeYear = document.querySelector('.extra-year.active-year');
+    if (!activeYear) return;
+    
+    const yearNumber = activeYear.innerHTML.split(' ')[1];
+    
+    const rows = [
+        document.querySelector(".input-container"),
+        ...document.querySelectorAll("#extra-rows-container .input-container")
+    ];
+
+    const coursesData = rows.map(row => ({
+        courseName: row.querySelector(".course-name").value,
+        credit: row.querySelector(".credit").value,
+        grade: row.querySelector(".grade").value,
+        placeholder: row.querySelector(".grade").placeholder,
+        hasPlaceholderClass: row.querySelector(".grade").classList.contains("grade-placeholder")
+    }));
+
+    // Save courses data
+    localStorage.setItem(`year${yearNumber}Data`, JSON.stringify({
+        courses: coursesData
+    }));
+    
+    // Save current HTML state
+    const container = document.getElementById("large-input-container");
+    localStorage.setItem(`year${yearNumber}HTML`, container.innerHTML);
+    
+    // Save GPAs
+    localStorage.setItem(`year${yearNumber}TargetGPA`, document.getElementById("target-GPA").value);
+    localStorage.setItem(`year${yearNumber}CurrentGPA`, document.getElementById("current-GPA").innerHTML);
+}
+
+function addInputEventListeners() {
+    // Add event listeners to grade inputs
+    document.querySelectorAll('.grade').forEach(input => {
+        input.addEventListener('focus', function() {
+            this.placeholder = '';
+            this.classList.remove('grade-placeholder');
+        });
+        
+        input.addEventListener('click', function() {
+            this.placeholder = '';
+            this.classList.remove('grade-placeholder');
+        });
+
+        input.addEventListener('blur', function() {
+            if (!this.value) {
+                this.placeholder = 'Enter grade';
+            }
+        });
+    });
+
+    // Add change event listeners for saving
+    document.querySelectorAll('.course-name, .credit, .grade').forEach(input => {
+        input.addEventListener('change', function() {
+            saveCurrentYearData();
+        });
+    });
+}
+
 function calculateTotalGPA() {
   const rows = [ 
     document.querySelector(".input-container"),
@@ -107,7 +409,7 @@ function calculateTotalGPA() {
   // Save after calculating GPA
   saveToLocalStorage();
 }
-  
+
 function suggest() {
   calculateTotalGPA(); // cập nhật GPA hiện tại nếu có thay đổi
 
@@ -232,6 +534,7 @@ function suggest() {
     gradeInput.classList.add("grade-placeholder");
   });
 }
+
 
 // Mảng lưu trữ lịch sử các trạng thái
 let stateHistory = [];
@@ -396,7 +699,72 @@ function loadFromLocalStorage() {
 }
 
 // Add event listener to load data when page loads
-document.addEventListener('DOMContentLoaded', loadFromLocalStorage);
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Year 1 button
+    const year1Button = document.querySelector('.extra-year');
+    if (year1Button) {
+        year1Button.onclick = function() { moveToYear(1); };
+    }
+    
+    // Restore existing years
+    for (let i = 1; i <= 4; i++) {
+        if (localStorage.getItem(`year${i}Data`)) {
+            if (i > 1) {
+                yearCount = i;
+                const extraYear = document.querySelector(".extra-year-container");
+                const year = document.createElement("button");
+                year.className = "extra-year";
+                year.innerHTML = `Year ${i}`;
+                year.onclick = function() { moveToYear(i); };
+                extraYear.appendChild(year);
+            }
+        } else if (i === 1) {
+            // Initialize year 1 data if it doesn't exist
+            localStorage.setItem('year1Data', JSON.stringify({
+                courses: [{
+                    courseName: "",
+                    credit: "",
+                    grade: ""
+                }]
+            }));
+            
+            const defaultHTML = `
+                <div class="input-container first-row">
+                    <div class="course-name-column">
+                        <p>Course Name</p>
+                        <input type="text" class="course-name" placeholder="Enter course name">
+                    </div>
+                    <div class="credit-column">
+                        <p>Credits</p>
+                        <select class="credit">
+                            <option value="">Select Credit</option>
+                            <option value="12">12</option>
+                            <option value="24">24</option>
+                        </select>
+                    </div>
+                    <div class="grade-column">
+                        <p>Grade</p>
+                        <input type="number" class="grade" placeholder="Enter grade">
+                    </div>
+                </div>
+                <div id="extra-rows-container"></div>
+            `;
+            localStorage.setItem('year1HTML', defaultHTML);
+            localStorage.setItem('year1TargetGPA', "");
+            localStorage.setItem('year1CurrentGPA', "");
+        }
+    }
+    
+    // Load year 1 state and set it as active
+    moveToYear(1);
+    
+    // Add auto-save functionality
+    document.querySelector('#wrapper').addEventListener('change', function(e) {
+        if (e.target.matches('input') || e.target.matches('select')) {
+            saveCurrentYearData();
+        }
+    });
+});
 
 // Add event listener when page loads
 document.addEventListener('DOMContentLoaded', function() {

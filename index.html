@@ -18,7 +18,17 @@
               </div>
                 <hr>
   <!-- INPUT -->  <div class="main-content">
-    <div class="left-section">      
+    <div class="left-section">
+      <div id="year-selector-container">
+          <div class="year-buttons">
+        <button onclick="addYear()" class="year-control-btn add-year">+ Add Year</button>
+        <button onclick="removeYear()" class="year-control-btn remove-year">- Remove Year</button>
+      </div>      <div class="extra-year-container">
+        <button class="extra-year" onclick="moveToYear(1)">Year 1</button>
+            <!--Extra Year is addedd here-->
+          </div>
+        </div>
+        
       <div id="large-input-container">
         <div class="input-container first-row">
           <div class="course-name-column">
@@ -49,7 +59,6 @@
       </div>
       
      <!--delete here-->
-
   
     </div>
 

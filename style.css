@@ -167,6 +167,12 @@ body {
     0 8px 8px rgba(0, 0, 0, 0.05);
 }
 
+#year-selector-container{
+  display: flex;
+  flex-direction: column; 
+  justify-content: center;
+  align-items: start;
+}
 .input-container {
   width: 100%;
   display: flex;
@@ -267,20 +273,22 @@ body {
 }
 
 #suggest-button-container button {
-  font-size: 1rem;          
+  font-size: 1rem;
+  font-weight: 500;          
   padding: 0.5em 1em;       
   height: auto;              
   line-height: 1.2;          
   display: inline-block;    
   border-radius: 10px 10px;
-  border-color: #c7c7c7;
+  border-color: #c7c7c752;
 }
 #calculate-button-container{
   display: flex;
   flex-direction: row;
 }
 #calculate-button-container button {
-  font-size: 1rem;          
+  font-size: 1rem;
+  font-weight: 500;          
   padding: 0.5em 1em;       
   height: auto;              
   line-height: 1.2;          
@@ -331,18 +339,8 @@ body {
   box-shadow: 0 4px 12px rgba(255, 77, 77, 0.1);
 }
 
-.control-panel {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  width: 100%;
-  gap: 15px;
-  padding: 15px;
-  background: white;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
-}
+
+
 
 #target-GPA-container {
   flex: 1;
@@ -419,7 +417,7 @@ body {
 #suggest-button {
   width: 100%;
   padding: 15px 30px;
-  background: linear-gradient(145deg, #FFFFFF, #f0f0f0);
+  background: linear-gradient(145deg, #f1f1f1, #e8e8e8);
   border: none;
   border-radius: 10px;
   font-size: 1.1rem;
@@ -543,4 +541,67 @@ social-links {
   opacity: 0.8;
   font-weight: bold;
   font-style: italic;
+}
+
+.year-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.year-control-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.add-year {
+  background: linear-gradient(145deg, #E61E2A, #ce1a25);
+  color: white;
+}
+
+.remove-year {
+  background: white;
+  color: #00204E;
+  border: 1px solid #00204E !important;
+}
+
+.year-control-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.extra-year-container {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 0.5vh;
+  
+}
+
+.extra-year {
+  margin-right: 1vw;
+  padding: 10px 20px;
+  background: linear-gradient(145deg, #00204E, #001538);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.extra-year:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.extra-year.active-year {
+  background: linear-gradient(145deg, #E61E2A, #ce1a25);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
