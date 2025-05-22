@@ -63,7 +63,7 @@ let yearCount = 1;
 
 function addYear() {
     if (yearCount >= 4) {
-        alert("You can only add up to 4 years!");
+        alert("Cannot add more than 4 years!");
         return;
     }
     
@@ -82,7 +82,10 @@ function addYear() {
     year.className = "extra-year";
     year.innerHTML = `Year ${yearCount}`;
     year.onclick = function() { moveToYear(yearCount); }; // Use function to ensure proper binding
-    extraYear.appendChild(year);
+    extraYear.appendChild(year);  
+     // Update GPA year text
+    const gpaYearText = document.getElementById('gpa-year-text');
+    gpaYearText.innerHTML = `Your Current GPA - Year ${yearCount}`;
     
     // Initialize storage for the new year if it doesn't exist
     if (!localStorage.getItem(`year${yearCount}Data`)) {
@@ -177,11 +180,15 @@ function moveToYear(year) {
         }
     });
 
+    // Update GPA year text
+    const gpaYearText = document.getElementById('gpa-year-text');
+    gpaYearText.innerHTML = `Your Current GPA - Year ${year}`;
+
+    // Reset GPA display to initial state when switching years
+    resetGPADisplay();
+
     // Add event listeners to the loaded inputs
     addInputEventListeners();
-    
-    // Reset current GPA display
-    document.getElementById("current-GPA").innerHTML = "";
 }
 
 function saveCurrentYearState(yearNumber) {
@@ -698,6 +705,8 @@ function loadFromLocalStorage() {
     document.getElementById("current-GPA").innerHTML = data.currentGPA || "";
 }
 
+
+
 // Add event listener to load data when page loads
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize Year 1 button
@@ -808,3 +817,5 @@ document.addEventListener('DOMContentLoaded', function() {
         saveState();
     }, 100);
 });
+
+

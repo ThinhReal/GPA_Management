@@ -60,21 +60,20 @@
       
      <!--delete here-->
   
-    </div>
-
-    <div class="right-section">
+    </div>    
+    <div class="right-section">      
       <div id="result-container">
-        <p>Your Current GPA</p>
-        <p id="current-GPA"><!--js--></p>
+        <p id="gpa-year-text">Your Current GPA</p>
+        <p id="current-GPA"></p>
       </div>
       <!--Change here-->
        <div class="control-panel">
+        <div id="calculate-button-container">
+          <button id="calculate-button" onclick="calculateTotalGPA()">Calculate GPA</button>
+        </div>
         <div id="target-GPA-container">
           <p>Target GPA:</p>
           <input type="number" id="target-GPA" placeholder="0.0 - 4.0" min="0" max="4" step="0.1">
-        </div>
-        <div id="calculate-button-container">
-          <button id="calculate-button" onclick="calculateTotalGPA()">Calculate GPA</button>
         </div>
       </div>
       <div id="suggest-button-container">

@@ -86,7 +86,7 @@ body {
   margin-bottom: 0vh;
   border: 1px solid #e0e0e0;
   transition: all 0.3s ease;
-  max-height: 60vh;
+  max-height: 40vh;
   overflow-y: auto;
 }
 
@@ -247,21 +247,19 @@ body {
   backdrop-filter: blur(5px);
 }
 
-#result-container p {
-  font-size: 1.5rem;
-  margin-bottom: 15px;
-  color: #444;
+#gpa-year-text {
+  font-size: 2rem;
   font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  color: #00204E;
+  margin-top: 15px;
+ 
 }
 
 #current-GPA {
-  font-size: 5rem;
+  font-size: 2.5rem;
   font-weight: 700;
-  margin-top: 15px;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s ease;
+  margin-top: 1.5vh;
+  color:#0a0187
 }
 #current-GPA:hover {
   transform: scale(1.05);
@@ -285,6 +283,9 @@ body {
 #calculate-button-container{
   display: flex;
   flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1vh;
 }
 #calculate-button-container button {
   font-size: 1rem;
@@ -340,16 +341,17 @@ body {
 }
 
 
-
-
 #target-GPA-container {
   flex: 1;
   display: flex;
+  flex-direction: row;
   align-items: center;
+  justify-content: start;
   gap: 15px;
   padding: 0;
   background: none;
   box-shadow: none;
+  margin-top: 2vh;
 }
 
 /* Target GPA container elements */
@@ -362,13 +364,13 @@ body {
 
 #target-GPA {
   flex: 1;
-  height: 45px;
-  max-width: 120px;
+  height: 4vh;
+  max-width: 20vh;
   border-radius: 8px;
   border: 1px solid #e0e0e0;
   padding: 8px 12px;
   font-size: 1.1rem;
-  transition: all 0.3s ease;
+ 
 }
 
 #target-GPA:focus {
@@ -380,6 +382,7 @@ body {
 #calculate-button-container {
   display: flex;
   gap: 15px;
+  margin-bottom: 1.5vh;
 }
 
 #calculate-button-container button {
@@ -604,4 +607,167 @@ social-links {
   background: linear-gradient(145deg, #E61E2A, #ce1a25);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive Design */
+/* Large laptops and desktops (1200px and up) */
+@media screen and (min-width: 1200px) {
+  .main-content {
+    padding: 20px 40px;
+  }
+  
+  .right-section {
+    width: 35%;
+  }
+}
+
+/* Medium laptops (992px to 1199px) */
+@media screen and (max-width: 1199px) {
+  #title-container p {
+    font-size: 1.8rem;
+  }
+  
+  .right-section {
+    width: 40%;
+    margin-right: 2vw;
+    margin-left: 2vw;
+  }
+  
+  #current-GPA {
+    font-size: 2.2rem;
+  }
+}
+
+/* Small laptops (768px to 991px) */
+@media screen and (max-width: 991px) {
+  .main-content {
+    flex-direction: column;
+    padding: 15px;
+  }
+  
+  .left-section, .right-section {
+    width: 100%;
+    margin: 10px 0;
+  }
+  
+  #large-input-container {
+    max-height: none;
+  }
+  
+  .right-section {
+    max-height: none;
+  }
+  
+  #title-container p {
+    font-size: 1.5rem;
+  }
+  
+  .input-container p {
+    font-size: 1.1rem;
+  }
+  
+  #calculate-button-container button,
+  #suggest-button {
+    font-size: 0.9rem;
+  }
+}
+
+/* Tablets and large phones (576px to 767px) */
+@media screen and (max-width: 767px) {
+  #header {
+    height: auto;
+    padding: 10px;
+    flex-direction: column;
+  }
+  
+  #image-container {
+    width: 50%;
+    margin-bottom: 10px;
+  }
+  
+  #image-container img {
+    height: 150%;
+  }
+  
+  #title-container {
+    width: 100%;
+    text-align: center;
+  }
+  
+  .input-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .course-name-column,
+  .credit-column,
+  .grade-column {
+    width: 100%;
+  }
+  
+  .footer-content {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .footer-section {
+    margin-bottom: 20px;
+  }
+}
+
+/* Small phones (575px and below) */
+@media screen and (max-width: 575px) {
+  #header {
+    padding: 8px;
+  }
+  
+  #title-container p {
+    font-size: 1.2rem;
+  }
+  
+  #gpa-year-text {
+    font-size: 1.5rem;
+  }
+  
+  #current-GPA {
+    font-size: 2rem;
+  }
+  
+  #add-button-container {
+    flex-direction: column;
+  }
+  
+  .year-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .extra-year-container {
+    gap: 8px;
+  }
+  
+  .extra-year {
+    margin: 4px;
+    padding: 8px 16px;
+  }
+  
+  #calculate-button-container {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  #calculate-button-container button {
+    width: 100%;
+    margin-right: 0;
+  }
+  
+  #target-GPA-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  #target-GPA {
+    max-width: none;
+  }
 }
