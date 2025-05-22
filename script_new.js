@@ -3,6 +3,7 @@ function addRow() {
     const container = document.getElementById("extra-rows-container");
     const row = document.createElement("div");
     row.className = "input-container";
+    
     row.innerHTML = `<div class="course-name-column">
             <input type="text" class="course-name" placeholder="Enter course name">
             </div>
@@ -100,7 +101,7 @@ function addYear() {
         
         // Set default HTML structure for the new year
         const defaultHTML = `
-            <div class="input-container first-row">
+            <div class="input-container-first-row">
                 <div class="course-name-column">
                     <p>Course Name</p>
                     <input type="text" class="course-name" placeholder="Enter course name">
@@ -220,7 +221,7 @@ function loadYearState(year) {
     } else {
         // If no saved HTML exists, create default structure
         targetYear.innerHTML = `
-            <div class="input-container first-row">
+            <div class="input-container-first-row">
                 <div class="course-name-column">
                     <p>Course Name</p>
                     <input type="text" class="course-name" placeholder="Enter course name">
@@ -447,14 +448,14 @@ function suggest() {
     const creditSelect = row.querySelector(".credit");
     const gradeInput = row.querySelector(".grade");
 
-    if (!creditSelect.value) return; // nếu chưa chọn tín chỉ → bỏ qua
+    if (!creditSelect.value) return; // nếu chưa chọn tín chỉ, so bỏ qua
 
     const creditNumber = parseFloat(creditSelect.value);
 
     if (gradeInput.value) {
       const grade = parseFloat(gradeInput.value);
       let gradePointValue;
-      // Chuyển điểm phần trăm → thang GPA (4.0)
+      // Chuyển điểm phần trăm  thành thang GPA (4.0)
       if (grade >= 80) gradePointValue = 4;
       else if (grade >= 70) gradePointValue = 3;
       else if (grade >= 60) gradePointValue = 2;
@@ -494,7 +495,7 @@ function suggest() {
     const maxPossibleGPA = maxPossiblePoints / totalCredits;
 
   if (maxPossibleGPA < targetGPA) {
-  alert(`With all remaining courses scoring 80% (GPA 4.0) your GPA is ${maxPossibleGPA}, your target GPA of ${targetGPA} is not achievable. Please lower your target.`);
+  alert(`With all remaining courses scoring 80% (GPA 4.0) your GPA is ${maxPossibleGPA.toFixed(2)}, your target GPA of ${targetGPA} is not achievable. Please lower your target.`);
   return;
 }
   // Hàm đệ quy (DFS) để tìm tổ hợp điểm gần nhất với target GPA
@@ -705,8 +706,6 @@ function loadFromLocalStorage() {
     document.getElementById("current-GPA").innerHTML = data.currentGPA || "";
 }
 
-
-
 // Add event listener to load data when page loads
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize Year 1 button
@@ -738,7 +737,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }));
             
             const defaultHTML = `
-                <div class="input-container first-row">
+                <div class="input-container-first-row">
                     <div class="course-name-column">
                         <p>Course Name</p>
                         <input type="text" class="course-name" placeholder="Enter course name">

@@ -173,14 +173,12 @@ body {
   justify-content: center;
   align-items: start;
 }
-.input-container {
-  width: 100%;
+.input-container {  width: 100%;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: flex-start;
   gap: 2vh;
-  
 }
 
 .input-container div {
@@ -189,8 +187,9 @@ body {
   gap: 8px;
 }
 
+/* Adjusting widths after removing course-count-column */
 .course-name-column {
-  width: 40%;
+  width: 35%;
 }
 
 .credit-column, .grade-column {
@@ -713,6 +712,12 @@ social-links {
   
   .footer-section {
     margin-bottom: 20px;
+  }
+
+  .course-count-column {
+    width: 100%;
+    justify-content: flex-start;
+    padding-left: 5px;
   }
 }
 
