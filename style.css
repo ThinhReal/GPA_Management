@@ -5,7 +5,6 @@
 }
 
 body {
-  margin: 0;
   min-height: 100vh;
   overflow-x: hidden;
 }
@@ -17,7 +16,6 @@ body {
   min-height: 100vh;
 }
 
-/* ================ Header ================ */
 #header {
   width: 100%;
   height: 15vh;
@@ -31,7 +29,6 @@ body {
   z-index: 1000;
   background: linear-gradient(to right, #00204E, #001538);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease;
 }
 
 #image-container {
@@ -49,14 +46,12 @@ body {
   min-height: 60px;
   max-height: 23vh;
   object-fit: contain;
-  transition: transform 0.3s ease;
 }
 
 #title-container {
   width: 50%;
   height: auto;
   display: flex;
-  flex-direction: row;
   justify-content: center;
   align-items: center;
 }
@@ -83,23 +78,18 @@ body {
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
-  margin-bottom: 0vh;
   border: 1px solid #e0e0e0;
-  transition: all 0.3s ease;
-  max-height: 40vh;
+  max-height: 55vh;
   overflow-y: auto;
-}
-
-#large-input-container:hover {
-  box-shadow: 0 6px 20px rgba(45, 140, 255, 0.1);
-  transform: translateY(-2px);
 }
 
 #large-input-container .input-container {
   padding: 15px;
-  margin-bottom: 15px;
   border-bottom: 1px solid #f0f0f0;
-  transition: all 0.3s ease;
+  
+}
+#extra-rows-container div {
+ margin-bottom: 0vhw;
 }
 
 #large-input-container .input-container:last-child {
@@ -107,28 +97,11 @@ body {
   margin-bottom: 0;
 }
 
-#large-input-container .input-container:hover {
-  background-color: #f8f9fa;
-  border-radius: 8px;
-}
-
-#large-input-container input,
-#large-input-container select {
-  transition: all 0.3s ease;
-  border: 1px solid #e0e0e0;
-}
-
-#large-input-container input:focus,
-#large-input-container select:focus {
-  border-color: #2d8cff;
-  box-shadow: 0 0 0 2px rgba(45, 140, 255, 0.1);
-  outline: none;
-}
-
-#large-input-container p {
-  color: #444;
-  font-weight: 500;
-  margin-bottom: 8px;
+.input-container-first-row .course-name-column,
+.input-container-first-row .credit-column,
+.input-container-first-row .grade-column {
+  flex: 1;
+  padding: 0 10px;
 }
 
 .left-section {
@@ -142,12 +115,56 @@ body {
 .right-section {
   width: 40%;
   padding: 30px;
-  background: linear-gradient(145deg, #ffffff, #f5f5f5);
+  background: #ffffff;
   border-radius: 20px;
-  box-shadow: 
-    0 10px 20px rgba(45, 140, 255, 0.1),
-    0 6px 6px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 10px 20px rgba(45, 140, 255, 0.1);
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  margin: 0 5vw;
+  min-height: fit-content;
+  max-height: 60vh;
+  border: 1px solid rgba(45, 140, 255, 0.1);
+  overflow-y: auto;
+}
+
+.input-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 2vh;
+}
+
+.input-container div {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.course-name-column {
+  width: 35%;
+}
+
+.credit-column, 
+.grade-column {
+  width: 20%;
+}
+
+.course-count-column {
+  width: 5%;
+  min-width: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.course-count-column p {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #00204E;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
@@ -173,27 +190,29 @@ body {
   justify-content: center;
   align-items: start;
 }
-.input-container {  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: flex-start;
-  gap: 2vh;
-}
-
-.input-container div {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-/* Adjusting widths after removing course-count-column */
+/* Course column styles */
 .course-name-column {
   width: 35%;
 }
 
 .credit-column, .grade-column {
   width: 20%;
+}
+
+/* Course count column styles */
+.course-count-column {
+  width: 5%;
+  min-width: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.course-count-column p {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #00204E;
+  margin: 0;
 }
 
 .input-container p {
@@ -543,38 +562,6 @@ social-links {
   opacity: 0.8;
   font-weight: bold;
   font-style: italic;
-}
-
-.year-buttons {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
-}
-
-.year-control-btn {
-  padding: 8px 16px;
-  border: none;
-  border-radius: 6px;
-  font-size: 0.7rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.add-year {
-  background: linear-gradient(145deg, #E61E2A, #ce1a25);
-  color: white;
-}
-
-.remove-year {
-  background: white;
-  color: #00204E;
-  border: 1px solid #00204E !important;
-}
-
-.year-control-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .extra-year-container {
