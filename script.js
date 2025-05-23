@@ -11,7 +11,7 @@ function addRow() {
             </div>
             <div class="credit-column">
                 <select class="credit">
-                    <option value="">Select Credit</option>
+                    <option value="">Credit</option>
                     <option value=12>12</option>
                     <option value=24>24</option>
                 </select>
@@ -62,15 +62,12 @@ function removeRow() {
   }
 }
 function calculateTotalGPA() {
-  const rows = [ 
-    document.querySelector("#large-input-container"),
-    ...document.querySelectorAll("#extra-rows-container .input-container")
-  ];
-  
+  const rows = document.querySelectorAll("#extra-rows-container .input-container");
+
   let totalCredits = 0;
   let totalGradePoints = 0;
 
-  rows.forEach((row) => {
+  for(const row of rows) {
     const creditSelect = row.querySelector(".credit");
     const gradeInput = row.querySelector(".grade");
     // Stop when Grade is entered but Credit is not
@@ -78,29 +75,30 @@ function calculateTotalGPA() {
       alert("Please select credit for the course with grade");
       return;
     }
-
     if (!creditSelect.value || !gradeInput.value) {   // Only calculate if both credit and grade are entered
-      return;
+      continue;
     }
     
     const creditNumber = parseFloat(creditSelect.value);
     const grade = parseFloat(gradeInput.value);
-
     // Chuyển điểm phần trăm  thành thang GPA (4.0)
     let gradePointValue;
     if (grade >= 80 && grade <=100) gradePointValue = 4;
       else if (grade >= 70) gradePointValue = 3;
       else if (grade >= 60) gradePointValue = 2;
       else if (grade >= 50) gradePointValue = 1;
-      else {alert("Please enter valid grades between 50 and 100 because you have to pass the course (grade >= 50) to get GPA") ; return;}
+      else {alert("Please enter valid grades between 50 and 100 because you have to pass the course (grade >= 50) to get GPA"); return;}
     totalCredits += creditNumber;
     totalGradePoints += creditNumber * gradePointValue;
-  });
+  };// hết vòng lặp
 
-
+  //Rồi thực hiện tính GPA hiện tại và gán vào ô GPA
   const GPA = totalGradePoints / totalCredits;
   document.getElementById("current-GPA").innerHTML = GPA.toFixed(2);
-  
+  //check the output
+    console.log("Total grade points:", totalGradePoints);
+    console.log("Total credits:", totalCredits);
+    console.log("Calculated GPA:", GPA);
 }
 function suggest() {
     calculateTotalGPA();
@@ -240,7 +238,6 @@ function autoSaveToLocalStorage(){
 }
 function fromLocalStorage(){
     const savedRows =JSON.parse(localStorage.getItem("courseRows") || "[]");
-    
     savedRows.forEach(data =>{
         addRow();
         const allRows =document.querySelectorAll(".input-container");
@@ -250,5 +247,4 @@ function fromLocalStorage(){
         currentRow.querySelector(".grade").value = data.grade;
     });
 }
-
 window.addEventListener("load",fromLocalStorage);
