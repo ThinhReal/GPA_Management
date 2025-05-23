@@ -302,5 +302,5 @@ function loadDataForYear(year) {
 }
 // Load last active year or default to Year 1 when page loads
 window.addEventListener("load", () => {
-    loadDataForYear('year 1');
+    loadDataForYear('Year 1');
 });
