@@ -263,13 +263,14 @@ body {
   border-radius: 15px;
   width: 100%;
   backdrop-filter: blur(5px);
+  margin-bottom:2vh;
 }
 
 #gpa-year-text {
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: 500;
   color: #00204E;
-  margin-top: 15px;
+  margin-top: 1vh;
  
 }
 

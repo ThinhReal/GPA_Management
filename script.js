@@ -52,7 +52,6 @@ function addRow(year=currentYear) {
     row.querySelector(".credit").addEventListener("change", autoSaveToLocalStorage);
     row.querySelector(".grade").addEventListener("input", autoSaveToLocalStorage);    
 }
-
 function removeRow() {
   const container = document.getElementById("extra-rows-container");
   const rows = container.getElementsByClassName("input-container");
@@ -144,7 +143,7 @@ function suggest() {
       else if (grade >= 70) gradePointValue = 3;
       else if (grade >= 60) gradePointValue = 2;
       else if (grade >= 50) gradePointValue = 1;
-      else alert("You have to pass the course (grade >= 50) to get GPA");
+      else {alert("You have to pass the course (grade >= 50) to get GPA"); return};
 
       totalCredits += creditNumber;
       totalGradePoints += creditNumber * gradePointValue;
@@ -225,7 +224,6 @@ function suggest() {
     gradeInput.classList.add("grade-placeholder");
   });
 }
-
 function autoSaveToLocalStorage(){
     // Save data whenever user creates Row or inputs data
     const allRows = [...document.querySelectorAll("#extra-rows-container .input-container")];
@@ -253,9 +251,8 @@ function autoSaveToLocalStorage(){
     // Save current year to restore on page load
     localStorage.setItem('lastActiveYear', currentYear);
 }
-
 // Load data for selected year
-function loadDataForYear(year) {
+function loadDataForYear(year){
     // Save current year's data before switching
     if (currentYear !== year) {
         autoSaveToLocalStorage();
