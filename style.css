@@ -42,9 +42,9 @@ body {
 
 #image-container img {
   width: auto;
-  height: 200%;
-  min-height: 60px;
-  max-height: 23vh;
+  height: 240%;
+  min-height: 72px;
+  max-height: 28vh;
   object-fit: contain;
 }
 
@@ -663,22 +663,30 @@ social-links {
 @media screen and (max-width: 767px) {
   #header {
     height: auto;
-    padding: 10px;
+    min-height: 12vh;
+    padding: 8px;
     flex-direction: column;
+    justify-content: center;
+    gap: 2px;
   }
-  
-  #image-container {
-    width: 50%;
-    margin-bottom: 10px;
+    #image-container {
+    width: 100%;
+    height: auto;
+    justify-content: center;
+    margin-bottom: 0;
   }
   
   #image-container img {
-    height: 150%;
+    height: 100%;
+    max-height: 30vh;
+    width: auto;
+    min-width: 120px;
   }
   
   #title-container {
     width: 100%;
     text-align: center;
+    padding: 0;
   }
   
   .input-container {
@@ -710,13 +718,27 @@ social-links {
 }
 
 /* Small phones (575px and below) */
-@media screen and (max-width: 575px) {
-  #header {
-    padding: 8px;
+@media screen and (max-width: 575px) {  #header {
+    padding: 5px;
+    min-height: 10vh;
+    gap: 0;
   }
   
   #title-container p {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
+    line-height: 1;
+    margin: 2px 0;
+  }
+  #image-container{
+    width: 100%;
+    height: 15vh;
+    display: flex;
+    align-items: center;
+  }
+  #image-container img {
+    max-height: 25vh;
+    min-width: 100px;
+    object-fit: contain;
   }
   
   #gpa-year-text {
