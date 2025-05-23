@@ -1,8 +1,11 @@
+let currentYear = "Year 1";
 // Function to add a new row with course numbering
-function addRow() {
+function addRow(year=currentYear) {
     const container = document.getElementById("extra-rows-container");
     const row = document.createElement("div");
-    row.className = "input-container";    row.innerHTML = `
+    row.setAttribute("data-year", year);
+    row.className = "input-container";    
+    row.innerHTML = `
             <div class="course-number-column">
                 <p></p>
                 </div>
@@ -44,7 +47,7 @@ function addRow() {
             this.placeholder = 'Enter grade';
         }
     });
-    //Lấy data rồi truy cập function autoSave để lưu data và local Storage
+    //Lấy data rồi truy cập function autoSave để lưu data và0 local Storage
     row.querySelector(".course-name").addEventListener("input",autoSaveToLocalStorage);
     row.querySelector(".credit").addEventListener("change", autoSaveToLocalStorage);
     row.querySelector(".grade").addEventListener("input", autoSaveToLocalStorage);    
@@ -222,29 +225,82 @@ function suggest() {
     gradeInput.classList.add("grade-placeholder");
   });
 }
+
 function autoSaveToLocalStorage(){
-    //Lưu data mỗi khi người dùng tạo Row và nhập Input.
-    const allRows = [...document.querySelectorAll(".input-container")];
-    let rowsData =[];
+    // Save data whenever user creates Row or inputs data
+    const allRows = [...document.querySelectorAll("#extra-rows-container .input-container")];
+    let rowsData = [];
+    
     allRows.forEach(row => {
         const courseName = row.querySelector(".course-name").value;
         const credit = row.querySelector(".credit").value;
         const grade = row.querySelector(".grade").value;
-        if(courseName || credit || grade){
-            rowsData.push({ courseName, credit, grade });
-        }
-    })
-    localStorage.setItem("courseRows", JSON.stringify(rowsData));
-}
-function fromLocalStorage(){
-    const savedRows =JSON.parse(localStorage.getItem("courseRows") || "[]");
-    savedRows.forEach(data =>{
-        addRow();
-        const allRows =document.querySelectorAll(".input-container");
-        const currentRow = allRows[allRows.length - 1];
-        currentRow.querySelector(".course-name").value = data.courseName;
-        currentRow.querySelector(".credit").value = data.credit;
-        currentRow.querySelector(".grade").value = data.grade;
+        const courseNumber = row.querySelector(".course-number-column p").textContent;
+        
+        // Save even empty rows to preserve structure
+        rowsData.push({ 
+            courseName, 
+            credit, 
+            grade,
+            courseNumber,
+            year: currentYear
+        });
     });
+    
+    // Save data for current year
+    localStorage.setItem(`courseRows_${currentYear}`, JSON.stringify(rowsData));
+    
+    // Save current year to restore on page load
+    localStorage.setItem('lastActiveYear', currentYear);
 }
-window.addEventListener("load",fromLocalStorage);
+
+// Load data for selected year
+function loadDataForYear(year) {
+    // Save current year's data before switching
+    if (currentYear !== year) {
+        autoSaveToLocalStorage();
+    }
+
+    // Update current year
+    currentYear = year;
+    
+    // Update UI to show active year
+    document.querySelectorAll('.extra-year').forEach(btn => {
+        if (btn.textContent === year) {
+            btn.classList.add('active-year');
+        } else {
+            btn.classList.remove('active-year');
+        }
+    });
+
+    const container = document.getElementById("extra-rows-container");
+    container.innerHTML = ""; // Clear old data
+
+    // Load saved data for the year
+    const savedRows = JSON.parse(localStorage.getItem(`courseRows_${year}`) || "[]");
+    
+    if (savedRows.length === 0) {
+        // If no saved data, add one empty row
+        addRow(year);
+    } else {
+        // Restore saved rows
+        savedRows.forEach(data => {
+            addRow(year);
+            const allRows = document.querySelectorAll("#extra-rows-container .input-container");
+            const currentRow = allRows[allRows.length - 1];
+            
+            currentRow.querySelector(".course-name").value = data.courseName || "";
+            currentRow.querySelector(".credit").value = data.credit || "";
+            currentRow.querySelector(".grade").value = data.grade || "";
+            
+            // Update course number if it was saved
+            if (data.courseNumber) {
+                currentRow.querySelector(".course-number-column p").textContent = data.courseNumber;
+            }
+        });
+    }
+}
+// Load last active year or default to Year 1 when page loads
+window.addEventListener("load", () => {
+    loadDataForYear('year 1');
+});
