@@ -110,6 +110,8 @@ body {
   flex-direction: column;
   align-items: start;
   gap: 20px;
+  position: relative; /* Thêm position relative cho container cha */
+  overflow: visible; /* Đảm bảo sticky element có thể hiển thị */
 }
 
 .right-section {
@@ -718,9 +720,10 @@ social-links {
 }
 
 /* Small phones (575px and below) */
-@media screen and (max-width: 575px) {  #header {
+@media screen and (max-width: 575px) { 
+   #header {
     padding: 5px;
-    min-height: 10vh;
+    min-height: 5vh;
     gap: 0;
   }
   
@@ -731,7 +734,7 @@ social-links {
   }
   #image-container{
     width: 100%;
-    height: 15vh;
+    height: 5vh;
     display: flex;
     align-items: center;
   }
@@ -784,5 +787,22 @@ social-links {
   
   #target-GPA {
     max-width: none;
+  }  #year-selector-container {
+    display: flex;
+    position: sticky;
+    top: 8vh; /* Đặt vị trí dưới header */
+    background: white;
+    z-index: 99;
+    padding: 10px 0;
+    width: 100%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .extra-year-container {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 0 10px;
   }
 }
