@@ -1,1 +1,1 @@
-# GPA_Management
+# GPA_Manager
